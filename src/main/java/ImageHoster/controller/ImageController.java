@@ -1,8 +1,10 @@
 package ImageHoster.controller;
 
+import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
+import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class ImageController {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private CommentService commentService;
+
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
     public String getUserImages(Model model) {
@@ -48,9 +53,14 @@ public class ImageController {
     //1.Image Upload Issue Fix : getImageByTitle() method is updated to pass the image id along with the title of the image to obtain a unique result
     @RequestMapping("/images/{imageId}/{title}")
     public String showImage(@PathVariable("title") String title, @PathVariable("imageId") Integer imageId, Model model) {
+
         Image image = imageService.getImageByTitle(title, imageId);
+        List<Comment> comments = commentService.fetchComments(imageId);
+
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments", comments);
+
         return "images/image";
     }
 
