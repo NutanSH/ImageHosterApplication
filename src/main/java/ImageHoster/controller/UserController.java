@@ -52,7 +52,7 @@ public class UserController {
 
         if (passwordValidator(user.getPassword())) {
             userService.registerUser(user);
-            return "redirect:/users/login";
+            return "users/login";
         } else {
             model.addAttribute("User", user);
             model.addAttribute("passwordTypeError", error);

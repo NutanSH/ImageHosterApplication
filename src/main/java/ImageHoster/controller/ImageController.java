@@ -108,15 +108,15 @@ public class ImageController {
 
         String error = "Only the owner of the image can edit the image";
         Image image = imageService.getImage(imageId);
+        List<Comment> comments = commentService.fetchComments(imageId);
 
-        String tags = convertTagsToString(image.getTags());
         model.addAttribute("image", image);
-        model.addAttribute("tags", tags);
+        model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments", comments);
 
         User user = (User) session.getAttribute("loggeduser");
         if (image.getUser().getId() == user.getId())
             return "images/edit";
-
         else {
             model.addAttribute("editError", error);
             return "images/image";
@@ -164,12 +164,14 @@ public class ImageController {
     //Issue Fix for Non-owner of the image able to delete the image, deleteImageSubmit method is modified to check the logged in User against the owner of the Image
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
     public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, HttpSession session, Model model) {
-        String error = "Only the owner of the image can edit the image";
+        String error = "Only the owner of the image can delete the image";
 
         Image image = imageService.getImage(imageId);
-        String tags = convertTagsToString(image.getTags());
+        List<Comment> comments = commentService.fetchComments(imageId);
+
         model.addAttribute("image", image);
-        model.addAttribute("tags", tags);
+        model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments", comments);
 
         User user = (User) session.getAttribute("loggeduser");
         if (image.getUser().getId() == user.getId()) {

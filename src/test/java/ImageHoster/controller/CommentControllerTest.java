@@ -1,4 +1,3 @@
-/*
 package ImageHoster.controller;
 
 
@@ -9,6 +8,7 @@ import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -53,16 +53,16 @@ public class CommentControllerTest {
 
 
         Image image = new Image();
-        image.setId(1);
-        image.setTitle("new");
-        image.setDescription("This image is for testing purpose");
+        image.setId(4);
+        image.setTitle("Image1");
+        image.setDescription("My first Upload");
 
         Mockito.when(imageService.getImage(Mockito.anyInt())).thenReturn(image);
 
-        this.mockMvc.perform(post("/image/1/new/comments")
+        this.mockMvc.perform(post("/image/4/Image1/comments")
                 .param("comment", "This comment is for testing purpose")
                 .session(session))
-                .andExpect(redirectedUrl("/images/1/new"));
+                .andExpect(redirectedUrl("/images/4/Image1"));
     }
 }
-*/
+
