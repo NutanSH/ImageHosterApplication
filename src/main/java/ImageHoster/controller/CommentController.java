@@ -38,8 +38,8 @@ public class CommentController {
         comment.setText(text);
         comment.setCreatedDate(new Date());
         commentService.addComment(comment);
-
-        return "redirect:/images/" + image.getId() + "/" + image.getTitle();
+        
+        return "redirect:/images/" + id + "/" + imageTitle;
     }
 
     //This method displays all the images in the user home page after successful login
