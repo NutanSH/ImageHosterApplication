@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Controller
@@ -23,6 +25,8 @@ public class UserController {
 
     @Autowired
     private ImageService imageService;
+
+    private static final String PASSWORD_PATTERN = "((?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&]).{3,})";
 
     //This controller method is called when the request pattern is of type 'users/registration'
     //This method declares User type and UserProfile type object
@@ -39,10 +43,21 @@ public class UserController {
 
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
+    //feature : Password strength check has been added.
+    //passwordValidator() method gets called which has logic to check whether the password of the user matchesi the criteria
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user) {
-        userService.registerUser(user);
-        return "redirect:/users/login";
+    public String registerUser(User user, Model model) {
+
+        String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
+
+        if (passwordValidator(user.getPassword())) {
+            userService.registerUser(user);
+            return "redirect:/users/login";
+        } else {
+            model.addAttribute("User", user);
+            model.addAttribute("passwordTypeError", error);
+            return "users/registration";
+        }
     }
 
     //This controller method is called when the request pattern is of type 'users/login'
@@ -79,4 +94,21 @@ public class UserController {
         model.addAttribute("images", images);
         return "index";
     }
+
+    //This method is called to check whether the password of the user who is trying to register
+    //matches the criteria set i.e it should contain at least 1 letter, 1 digit and 1 special character
+    public boolean passwordValidator(String password) {
+
+        boolean flag = false;
+        Pattern pattern;
+        Matcher matcher;
+
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(password);
+        if (matcher.matches())
+            flag = true;
+
+        return flag;
+    }
 }
+
